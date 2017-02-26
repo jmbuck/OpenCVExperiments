@@ -22,7 +22,7 @@ public class SmileDetector {
 	//depending on whether there is a person smiling or not in the image.
 	public static void main(String[] args) 
 	{
-		File[] files = new File("C:\\Users\\Jordan\\Desktop\\database 2\\lfw").listFiles(new FileFilter() {
+		File[] files = new File("C:\\Users\\Jordan\\git\\SmileDetector").listFiles(new FileFilter() {
 
 			@Override
 			public boolean accept(File arg0) {
@@ -48,35 +48,37 @@ public class SmileDetector {
 
 			if(faceDetection.toArray().length != 0) {
 				MatOfRect smileDetection = new MatOfRect();
-				//MatOfRect eyeDetection = new MatOfRect();
+				MatOfRect eyeDetection = new MatOfRect();
 				for (Rect rect : faceDetection.toArray()) {
 					//draw rectangle around face
 					Imgproc.rectangle(image, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),
 							new Scalar(0, 0, 255));
 					
-					//Mat eyeRoi = new Mat(image, rect);
+					Mat eyeRoi = new Mat(image, rect);
 					
 					int xOffset = rect.x;
-					Rect mouthRect = new Rect(rect.x, rect.y+(rect.height/2), rect.width, rect.height/2);
-					int yOffset = mouthRect.y;
+					int eyeYOffset = rect.y;
+					Rect eyeROIRect = new Rect(rect.x, rect.y, rect.width, rect.height/2);
+					Rect mouthROIRect = new Rect(rect.x, rect.y+(rect.height/2), rect.width, rect.height/2);
+					int mouthYOffset = mouthROIRect.y;
 					
-					//Detect eyes
-					/*eyeClassifier.detectMultiScale(eyeRoi, eyeDetection);
+					//Draw rectangles around eyes
+					eyeClassifier.detectMultiScale(eyeRoi, eyeDetection);
 					for(Rect eyeRect : eyeDetection.toArray()) {
-						Imgproc.rectangle(image, new Point(xOffset + eyeRect.x, yOffset + eyeRect.y), new Point(xOffset + eyeRect.x + eyeRect.width, yOffset + eyeRect.y + eyeRect.height),
+						Imgproc.rectangle(image, new Point(xOffset + eyeRect.x, eyeYOffset + eyeRect.y), new Point(xOffset + eyeRect.x + eyeRect.width, eyeYOffset + eyeRect.y + eyeRect.height),
 								new Scalar(255, 0, 0));
 						
-						if(eyeRect.y + eyeRect.height > yOffset) {
-							yOffset = eyeRect.y + eyeRect.height;
+						if(eyeRect.y + eyeRect.height > eyeYOffset) {
+							eyeYOffset = eyeRect.y + eyeRect.height;
 						}	
-					}*/
+					}
 					
 					//detect smiles in face region
-					Mat smileRoi = new Mat(image, mouthRect);	
-					smileClassifier.detectMultiScale(smileRoi, smileDetection);
+					Mat mouthROI = new Mat(image, mouthROIRect);	
+					smileClassifier.detectMultiScale(mouthROI, smileDetection);
 					for (Rect smileRect : smileDetection.toArray()) {
 						//draw rectangle around smile
-						Imgproc.rectangle(image, new Point(xOffset + smileRect.x, yOffset + smileRect.y), new Point(xOffset + smileRect.x + smileRect.width, yOffset + smileRect.y + smileRect.height),
+						Imgproc.rectangle(image, new Point(xOffset + smileRect.x, mouthYOffset + smileRect.y), new Point(xOffset + smileRect.x + smileRect.width, mouthYOffset + smileRect.y + smileRect.height),
 								new Scalar(0, 255, 0));
 					}
 					
