@@ -18,6 +18,10 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.videoio.VideoCapture;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 public class FaceDetectionFrame extends JFrame 
 {
 	private final static String SMILE_CASCADE = "haarcascade_smile.xml";
@@ -31,21 +35,22 @@ public class FaceDetectionFrame extends JFrame
 
 	public static void main(String[] args) 
 	{
-		 System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		 capture = new VideoCapture();
-		 capture.open(0);
-		 EventQueue.invokeLater(new Runnable() {
-	            public void run() {
-	                try {
-	                    FaceDetectionFrame frame = new FaceDetectionFrame();
-	                    frame.setVisible(true);
-	                } catch (Exception e) {
-	                    e.printStackTrace();
-	                }
-	            }
-	        });
-		 
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		capture = new VideoCapture();
+		capture.open(0);
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					FaceDetectionFrame frame = new FaceDetectionFrame();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
 	}
+
 
 	public BufferedImage matToImage(Mat mat) {
 
@@ -99,7 +104,7 @@ public class FaceDetectionFrame extends JFrame
 		}
 		return matToImage(mat);
 	}
-	
+
 	public FaceDetectionFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 650, 490);
@@ -125,5 +130,22 @@ public class FaceDetectionFrame extends JFrame
 				} catch (InterruptedException e) {    }
 			}  
 		} 
+	}
+	
+	public void exit() {
+		System.out.println("Exiting");
+		System.exit(0);
+	}
+
+	class ExitKeyListener extends KeyAdapter {
+
+		@Override
+		public void keyPressed(KeyEvent event) {
+			char ch = event.getKeyChar();
+			if (ch == 'q') 
+			{
+				exit();
+			}
+		}
 	}
 }
